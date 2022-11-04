@@ -15,7 +15,7 @@ import PasswordStrengthMeter from "./PasswordStrengthMeter";
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function Loggedin() {
+export default function Loggedin({username}) {
   //Date
   const current = new Date();
   const date = `${current.getDate()}/${
@@ -73,16 +73,16 @@ export default function Loggedin() {
 
   // Premium
   const [premium, setpremium] = useState("GET PREMIUM");
-  // useEffect(() => {
-  //   if (
-  //     username == "Rishab" ||
-  //     username == "Krish" ||
-  //     username == "Vivaan" ||
-  //     username == "Arnav"
-  //   ) {
-  //     setpremium("PREMIUM");
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (
+      username == "Rishab" ||
+      username == "Krish" ||
+      username == "Vivaan" ||
+      username == "Arnav"
+    ) {
+      setpremium("PREMIUM");
+    }
+  }, []);
 
   // Delete passwords
   const removeTodo = (index) => {
@@ -175,13 +175,13 @@ export default function Loggedin() {
             <View className="bg-gray-700 rounded-xl p-[25px]">
               <TextInput
                 className="bg-gray-200 rounded-lg p-2"
-                placeholder="Account identifier"
+                placeholder=" Account identifier"
                 keyboardType="text"
                 onChangeText={setnotice2}
               />
               <TextInput
                 className="bg-gray-200 mt-2 rounded-lg p-2"
-                placeholder="Password"
+                placeholder=" Password"
                 keyboardType="text"
                 onChangeText={setdate2}
               />
