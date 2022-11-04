@@ -13,6 +13,7 @@ import {
 import deleteicon from "./assets/delete.png";
 import PasswordStrengthMeter from "./PasswordStrengthMeter";
 import * as SecureStore from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Loggedin() {
   //Date
@@ -34,34 +35,37 @@ export default function Loggedin() {
       return;
     }
     seteventData([...eventData, { notice: notice2, date: date2 }]);
-    // localStorage.setItem("LOCAL", JSON.stringify(eventData));
-    save(notice2, date2);
+    storeData(eventData);
   }
 
-  //
-  async function save(notice2, date2) {
-    await SecureStore.setItemAsync(notice3, notice2);
-    await SecureStore.setItemAsync(date3, date2);
+  async function storeData(eventData) {
+    try {
+      const jsonValue = JSON.stringify(eventData);
+      await AsyncStorage.setItem("@storage_Key", jsonValue);
+    } catch (e) {
+      // saving error
+    }
   }
   //
-  async function get(notice2, date2) {
-    let result = await SecureStore.getItemAsync(notice2, date2);
-    if (result) {
-      seteventData(result);
+  //
+  async function getData() {
+    try {
+      const jsonValue = await AsyncStorage.getItem("@storage_Key");
+      jsonValue != null
+        ? seteventData(JSON.parse(jsonValue))
+        : seteventData(null);
+    } catch (e) {
+      // error reading value
     }
   }
   //
 
-  // let a = JSON.parse(localStorage.getItem("LOCAL")) || [];
-  let a = [];
   useEffect(() => {
-    seteventData(a);
-
-    // console.log(JSON.parse(localStorage.getItem("LOCAL")));
+    getData();
   }, []);
 
   useEffect(() => {
-    // localStorage.setItem("LOCAL", JSON.stringify(eventData));
+    storeData(eventData);
   }, [eventData]);
 
   // Password generator visibility
@@ -127,24 +131,23 @@ export default function Loggedin() {
               </View>
             </View>
           </View>
+          <Text className="text-gray-300 mx-auto mb-4">Today's date : {date}</Text>
         </View>
         <ScrollView>
           <ScrollView>
             {eventData.map((eventData1, index) => {
               return (
                 <>
-                  <View className="mb-4">
+                  <View key={index} className="mb-4">
                     <View className="bg-gray-700 rounded-xl p-[25px]">
                       <View className="flex-row">
                         <Text
                           // onPress={() => removeTodo(index)}
-                          className="text-xl w-max text-white font-semibold "
+                          className="text-xl w-max text-white font-semibold border-b border-gray-200"
                         >
                           {eventData1.notice}
                         </Text>
-                        <TouchableOpacity
-                          onPress={() => removeTodo(index)}
-                        >
+                        <TouchableOpacity onPress={() => removeTodo(index)}>
                           <Image
                             // whileHover={{ rotate: 180 }}
                             source={deleteicon}
